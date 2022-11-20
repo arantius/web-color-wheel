@@ -190,7 +190,7 @@ Object.entries(colors).forEach(([name, color], _) => {
 
   // Based on https://stackoverflow.com/a/54522007/91238 .
   let colorRadius = s * radius;
-  let colorAngle = (1-h)/360 * 2 * Math.PI;
+  let colorAngle = h/360 * 2 * Math.PI;
 
   let x = Math.cos(colorAngle) * colorRadius;
   let y = Math.sin(colorAngle) * colorRadius;
