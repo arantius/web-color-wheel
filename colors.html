@@ -17,8 +17,20 @@
 <style>
 circle { stroke-width: 2px; }
 circle:hover { stroke: black; }
+polygon { stroke-width: 2px; }
+polygon:hover { stroke: black; }
 </style>
+
+<defs>
+  <mask id="circle-mask">
+    <rect x="0" y="0" width="1024" height="1024" fill="black" />
+    <circle cx="512" cy="512" r="512" fill="white" />
+  </mask>
+</defs>
 </svg>
+
+<!-- https://github.com/gorhill/Javascript-Voronoi -->
+<script src="rhill-voronoi-core.min.js"></script>
 
 <script>
 // Based on https://drafts.csswg.org/css-color/#named-colors .
@@ -177,7 +189,7 @@ const colors = {
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
 function rgb2hsv(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
-  let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+  let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c));
   return [60*(h<0?h+6:h), v&&c/v, v];
 }
 
@@ -188,6 +200,8 @@ const cy = radius;
 
 const svg = document.querySelector('svg');
 
+let colorsBySite = {};
+let sites = [];
 Object.entries(colors).forEach(([name, color], _) => {
   let [r, g, b] = color;
   let [h, s, v] = rgb2hsv(r/255, g/255, b/255);
@@ -196,20 +210,47 @@ Object.entries(colors).forEach(([name, color], _) => {
   let colorRadius = s * radius;
   let colorAngle = h/360 * 2 * Math.PI;
 
-  let x = Math.cos(colorAngle) * colorRadius;
-  let y = Math.sin(colorAngle) * colorRadius;
+  let x = Math.cos(colorAngle) * colorRadius + 512;
+  let y = Math.sin(colorAngle) * colorRadius + 512;
 
+  /*
   let dotSize = 16;
   let dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  dot.setAttribute('cx', x - (dotSize/2) + 512);
-  dot.setAttribute('cy', y - (dotSize/2) + 512);
+  dot.setAttribute('cx', x - (dotSize/2));
+  dot.setAttribute('cy', y - (dotSize/2));
   dot.setAttribute('r', dotSize);
   dot.setAttribute('style', `fill: rgb(${r}, ${g}, ${b})`);
-  //dot.setAttribute('fill', 'black');
+  dot.setAttribute('title', name);
   svg.appendChild(dot);
+  */
+
+  sites.push({x: x, y: y});
+  colorsBySite[[x, y]] = name;
 });
-</script>
 
+let voronoi = new Voronoi().compute(sites, {xl: 0, xr: 1024, yt: 0, yb: 1024});
 
-<script>
+voronoi.cells.forEach(cell => {
+  //console.log('cell', cell, );
+  if (cell.closeMe) {
+    console.warn('cell', cell, 'needs closing');
+    return;
+  }
+  let colorName = colorsBySite[[cell.site.x, cell.site.y]];
+  let [r, g, b] = colors[colorName];
+
+  let c = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  c.setAttribute('style', `fill: rgb(${r}, ${g}, ${b})`);
+  c.setAttribute('mask', 'url(#circle-mask)');
+
+  let points = '';
+  cell.halfedges.forEach(edge => {
+    let s = edge.getStartpoint();
+    let e = edge.getEndpoint();
+    points += `${s.x} ${s.y}, `;
+  });
+  c.setAttribute('points', points);
+
+  svg.appendChild(c);
+});
 </script>
