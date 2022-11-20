@@ -13,18 +13,18 @@
     viewbox="0 0 1024 1024"
     width="800"
     xmlns="http://www.w3.org/2000/svg"
->
-<style>
-polygon { stroke-width: 4px; }
-polygon:hover { stroke: black; }
-</style>
+    >
+  <style>
+  polygon { stroke-width: 4px; }
+  polygon:hover { stroke: black; }
+  </style>
 
-<defs>
-  <mask id="circle-mask">
-    <rect x="0" y="0" width="1024" height="1024" fill="black" />
-    <circle cx="512" cy="512" r="512" fill="white" />
-  </mask>
-</defs>
+  <defs>
+    <mask id="circle-mask">
+      <rect x="0" y="0" width="1024" height="1024" fill="black" />
+      <circle cx="512" cy="512" r="512" fill="white" />
+    </mask>
+  </defs>
 </svg>
 
 <!-- https://github.com/gorhill/Javascript-Voronoi -->
@@ -210,18 +210,6 @@ Object.entries(colors).forEach(([name, color], _) => {
 
   let x = Math.cos(colorAngle) * colorRadius + 512;
   let y = Math.sin(colorAngle) * colorRadius + 512;
-
-  /*
-  let dotSize = 16;
-  let dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  dot.setAttribute('cx', x - (dotSize/2));
-  dot.setAttribute('cy', y - (dotSize/2));
-  dot.setAttribute('r', dotSize);
-  dot.setAttribute('style', `fill: rgb(${r}, ${g}, ${b})`);
-  dot.setAttribute('title', name);
-  svg.appendChild(dot);
-  */
-
   sites.push({x: x, y: y});
   colorsBySite[[x, y]] = name;
 });
@@ -229,7 +217,6 @@ Object.entries(colors).forEach(([name, color], _) => {
 let voronoi = new Voronoi().compute(sites, {xl: 0, xr: 1024, yt: 0, yb: 1024});
 
 voronoi.cells.forEach(cell => {
-  //console.log('cell', cell, );
   if (cell.closeMe) {
     console.warn('cell', cell, 'needs closing');
     return;
