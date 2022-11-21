@@ -272,6 +272,7 @@ function renderWheel() {
       let e = edge.getEndpoint();
       points += `${s.x} ${s.y}, `;
     });
+    points = points.replace(/, $/, '');
     c.setAttribute('points', points);
 
     svg.appendChild(c);
