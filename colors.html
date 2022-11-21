@@ -25,8 +25,10 @@ body {
   color: black;
   left: 0;
   margin: 0 25%;
+  padding: 0 1ex;
   position: fixed;
-  top: 10em;
+  text-align: left;
+  top: 7em;
 }
 #about:target {
   display: block;
@@ -34,7 +36,7 @@ body {
 #about .close {
   color: black;
   float: right;
-  margin: 1ex;
+  margin: 1ex 0 1ex 1ex;
   text-decoration: none;
 }
 
@@ -42,10 +44,10 @@ svg {
   clip-path: circle(300px at center);
 }
 
-#css1 h1 {
-  display: inline-block;
-  margin: 1ex 1em;
-  width: 5em;
+.swatch {
+  border: 8px outset white;
+  border-bottom-color: black;
+  border-left-color: gray;
 }
 </style>
 </head>
@@ -355,8 +357,8 @@ document.body.addEventListener('click', e => {
 <a id='about-link' href='#about'>❓</a>
 <div id='about'>
   <a class='close' href='#'>❌</a>
-  <p>I'm far from a designer, but I make web pages.  For quite some time I've thought about the palette of "web colors".  I'd like to be able to pick from those colors, when making simple web pages.  (Rather thank picking from all possible colors.)</p>
-  <p>I've thought about this "color wheel" arrangement, i.e. when using image editors.  It's a compact way to represent a whole range of colors.  I was reminded of the combination of these things by <a href="https://news.ycombinator.com/item?id=33647207">a recent Hacker News comment thread</a>.</p>
-  <p>So here it is: a color wheel, with only "web colors" on it.  Each color is placed on the wheel, then grown to a polygon to fill the wheel with a Voronoi diagram.  The arrangement of polygons, and their sizes, is intriguing.</p>
-  <p>Hover colors to see their name (and preview swatch and hex code).  Click one to "lock" it.</p>
+  <p>This "color wheel" arrangement is a compact and visual way to represent a whole range of colors.  I was reminded of the named/web colors by <a href="https://news.ycombinator.com/item?id=33647207">a recent Hacker News comment thread</a>, and thought again of arranging them into a color wheel.</p>
+  <p>So here it is: a color wheel, with only "web colors" on it.  Each color is placed on the wheel, then grown to a polygon to fill the wheel with a Voronoi diagram.</p>
+  <p>Hover colors to see their name (plus extra preview color swatch and hex code).  Click one to "lock" it.  The idea is when picking colors for a design, choose visually here from these few (139 distinct) colors, rather than trying to choose from the millions that are actually available.  And you can refer to them by name in your CSS!</p>
+  <p>The arrangement of the wheel has been tweaked from a pure <a href="https://en.wikipedia.org/wiki/HSL_and_HSV">HSV</a> interpretation, to make sure all names have a distinct location.  List of colors from <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color">Mozilla documentation</a>.</p>
 </div>
