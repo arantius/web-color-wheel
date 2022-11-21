@@ -60,7 +60,7 @@ svg {
     xmlns="http://www.w3.org/2000/svg"
     >
   <style>
-  polygon { stroke-width: 5px; }
+  polygon { stroke-width: 1px; }
   </style>
 </svg>
 
@@ -273,6 +273,7 @@ function activateColor(el) {
   // Force its stroke to be black.  (Doing this with CSS doesn't work; the
   // hover state is broken by mutating the DOM.)
   el.style.stroke = 'black';
+  el.style.strokeWidth = '5px';
 }
 
 // https://stackoverflow.com/a/5624139/91238
