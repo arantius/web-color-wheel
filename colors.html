@@ -337,6 +337,9 @@ svg.addEventListener('mouseout', e => {
 document.body.addEventListener('click', e => {
   let el = e.target;
 
+  // Ignore clicks, i.e. to select, in the preview.
+  if (document.getElementById('preview').contains(el)) return;
+
   // Remove possible forced stroke from previously-locked color.
   document.querySelectorAll('polygon[style]').forEach(el => {
     el.removeAttribute('style');
