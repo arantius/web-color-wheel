@@ -206,47 +206,51 @@ const cy = radius;
 const svg = document.querySelector('svg');
 const svgStyle = svg.querySelector('style').sheet;
 
-let colorsBySite = {};
-let sites = [];
-Object.entries(colors).forEach(([name, color], _) => {
-  let [r, g, b] = color;
-  let [h, s, v] = rgb2hsv(r/255, g/255, b/255);
+// TODO: Select-able color categories, re-render wheel.
+function renderWheel() {
+  let colorsBySite = {};
+  let sites = [];
+  Object.entries(colors).forEach(([name, color], _) => {
+    let [r, g, b] = color;
+    let [h, s, v] = rgb2hsv(r/255, g/255, b/255);
 
-  // Based on https://stackoverflow.com/a/54522007/91238 .
-  let colorRadius = s * radius;
-  let colorAngle = h/360 * 2 * Math.PI;
+    // Based on https://stackoverflow.com/a/54522007/91238 .
+    let colorRadius = s * radius;
+    let colorAngle = h/360 * 2 * Math.PI;
 
-  let x = Math.cos(colorAngle) * colorRadius + 512;
-  let y = Math.sin(colorAngle) * colorRadius + 512;
-  sites.push({x: x, y: y});
-  colorsBySite[[x, y]] = name;
-});
-
-let voronoi = new Voronoi().compute(sites, {xl: 0, xr: 1024, yt: 0, yb: 1024});
-voronoi.cells.forEach(cell => {
-  if (cell.closeMe) {
-    console.warn('cell', cell, 'needs closing');
-    return;
-  }
-  let colorName = colorsBySite[[cell.site.x, cell.site.y]];
-  let [r, g, b] = colors[colorName];
-
-  let c = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-  c.setAttribute('data-color', colorName);
-  c.setAttribute('mask', 'url(#circle-mask)');
-
-  let points = '';
-  cell.halfedges.forEach(edge => {
-    let s = edge.getStartpoint();
-    let e = edge.getEndpoint();
-    points += `${s.x} ${s.y}, `;
+    let x = Math.cos(colorAngle) * colorRadius + 512;
+    let y = Math.sin(colorAngle) * colorRadius + 512;
+    sites.push({x: x, y: y});
+    colorsBySite[[x, y]] = name;
   });
-  c.setAttribute('points', points);
 
-  svg.appendChild(c);
-  let rgb = `rgb(${r}, ${g}, ${b})`;
-  svgStyle.insertRule(`[data-color=${colorName}] { fill: ${rgb}; stroke: ${rgb}; }`);
-});
+  let voronoi = new Voronoi().compute(sites, {xl: 0, xr: 1024, yt: 0, yb: 1024});
+  voronoi.cells.forEach(cell => {
+    if (cell.closeMe) {
+      console.warn('cell', cell, 'needs closing');
+      return;
+    }
+    let colorName = colorsBySite[[cell.site.x, cell.site.y]];
+    let [r, g, b] = colors[colorName];
+
+    let c = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    c.setAttribute('data-color', colorName);
+    c.setAttribute('mask', 'url(#circle-mask)');
+
+    let points = '';
+    cell.halfedges.forEach(edge => {
+      let s = edge.getStartpoint();
+      let e = edge.getEndpoint();
+      points += `${s.x} ${s.y}, `;
+    });
+    c.setAttribute('points', points);
+
+    svg.appendChild(c);
+    let rgb = `rgb(${r}, ${g}, ${b})`;
+    svgStyle.insertRule(`[data-color=${colorName}] { fill: ${rgb}; stroke: ${rgb}; }`);
+  });
+}
+renderWheel();
 
 function activateColor(el) {
   renderPreview(el.getAttribute('data-color'));
@@ -255,6 +259,30 @@ function activateColor(el) {
   // Force its stroke to be black.  (Doing this with CSS doesn't work; the
   // hover state is broken by mutating the DOM.)
   el.style.stroke = 'black';
+}
+
+// https://stackoverflow.com/a/5624139/91238
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+let previewLocked = false;
+function renderPreview(color) {
+  if (!color) {
+    document.getElementById('preview').innerHTML = '';
+    return;
+  }
+  let [r, g, b] = colors[color];
+
+  document.getElementById('preview').innerHTML = `
+      ${color}
+      <span id='swatch' style='background-color: ${color};'>&nbsp;</span>
+      ${rgbToHex(r, g, b).toUpperCase()}
+      `;
 }
 
 svg.addEventListener('mouseover', e => {
@@ -275,44 +303,26 @@ svg.addEventListener('mouseout', e => {
     el.removeAttribute('style');
   }
 });
-svg.addEventListener('click', e => {
+document.body.addEventListener('click', e => {
   let el = e.target;
-  if (el.tagName != 'polygon') return;
 
   // Remove possible forced stroke from previously-locked color.
   document.querySelectorAll('polygon[style]').forEach(el => {
     el.removeAttribute('style');
   });
 
+  if (el.tagName != 'polygon') {
+    previewLocked = false;
+    renderPreview(null);
+    return;
+  }
+
   previewLocked = true;
   activateColor(el);
 });
-
-// https://stackoverflow.com/a/5624139/91238
-function componentToHex(c) {
-  var hex = c.toString(16);
-  return hex.length == 1 ? "0" + hex : hex;
-}
-function rgbToHex(r, g, b) {
-  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-let previewLocked = false;
-function renderPreview(color) {
-  if (!color) {
-    document.getElementById('preview').innerHTML = '';
-    return;
-  }
-  let [r, g, b] = colors[color];
-
-  document.getElementById('preview').innerHTML = `
-  <h1>
-    ${color}
-    <span id='swatch' style='background-color: ${color};'>&nbsp;</span>
-    ${rgbToHex(r, g, b).toUpperCase()}
-  </h1>
-  `;
-}
-
 </script>
-<div id="preview"></div>
+<h1 id="preview"></h1>
+
+<!--
+https://news.ycombinator.com/item?id=33647207
+-->
