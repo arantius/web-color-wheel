@@ -37,6 +37,10 @@ body {
   margin: 1ex;
   text-decoration: none;
 }
+
+svg {
+  clip-path: circle(300px at center);
+}
 </style>
 </head>
 <body>
@@ -46,19 +50,12 @@ body {
     height="600"
     version="1.1"
     viewbox="0 0 1024 1024"
-    width="800"
+    width="600"
     xmlns="http://www.w3.org/2000/svg"
     >
   <style>
   polygon { stroke-width: 5px; }
   </style>
-
-  <defs>
-    <mask id="circle-mask" maskUnits="userSpaceOnUse">
-      <rect x="0" y="0" width="1024" height="1024" fill="black" />
-      <circle cx="512" cy="512" r="512" fill="white" />
-    </mask>
-  </defs>
 </svg>
 
 <!-- https://github.com/gorhill/Javascript-Voronoi -->
