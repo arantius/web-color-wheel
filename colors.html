@@ -6,11 +6,6 @@ body {
   font-family: sans-serif;
   text-align: center;
 }
-.swatch {
-  display: inline-block;
-  min-width: 5em;
-}
-
 #about-link {
   margin: 1ex;
   position: absolute;
@@ -44,10 +39,26 @@ svg {
   clip-path: circle(300px at center);
 }
 
-.swatch {
+#swatch {
   border: 8px outset white;
   border-bottom-color: black;
   border-left-color: gray;
+  min-width: 5em;
+  min-height: 2em;
+}
+#preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#preview-container,
+#preview,
+#swatch,
+#swatch-hex {
+  width: 100%;
+  clear: both;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -304,17 +315,20 @@ function rgbToHex(r, g, b) {
 let previewLocked = false;
 function renderPreview(color) {
   if (!color) {
-    document.getElementById('preview').innerHTML = '';
+    document.getElementById('preview-container').innerHTML = '';
     return;
   }
   let [r, g, b] = colors[color];
 
-  document.getElementById('preview').innerHTML = `
-      ${color}
-       <span class="swatch"
-          style="background-color: ${rgbToHex(r, g, b)};">&nbsp;</span>
-      ${rgbToHex(r, g, b).toUpperCase()}
+  document.getElementById('preview-container').innerHTML = `
+        <div id='preview' data-cb='${color}'>${color}</div>
+        <div id='swatch' data-cb=${rgbToHex(r, g, b).toUpperCase()} style="background-color: ${rgbToHex(r, g, b)};"></div>
+        <div id='swatch-hex' data-cb=${rgbToHex(r, g, b).toUpperCase()}>${rgbToHex(r, g, b).toUpperCase()}</div>
       `;
+  // Add event listeners to the newly created DOM.
+  Array.from(document.querySelectorAll('#preview, #swatch, #swatch-hex')).map(x=>x.addEventListener('click', e => {
+   clipboardEvt(e.target.dataset.cb);
+  }));
 }
 
 svg.addEventListener('mouseover', e => {
@@ -339,7 +353,7 @@ document.body.addEventListener('click', e => {
   let el = e.target;
 
   // Ignore clicks, i.e. to select, in the preview.
-  if (document.getElementById('preview').contains(el)) return;
+  if (document.getElementById('preview-container').contains(el)) return;
 
   // Remove possible forced stroke from previously-locked color.
   document.querySelectorAll('polygon[style]').forEach(el => {
@@ -355,9 +369,28 @@ document.body.addEventListener('click', e => {
   previewLocked = true;
   activateColor(el);
 });
-</script>
-<h1 id="preview"></h1>
 
+function clipboardEvt(val) {
+  // Target the input to store the clipboard value.
+  let clipTarget = document.querySelector('#clipboard');
+  // Set the input.
+  clipTarget.value = val;
+  // Show the input momentarily.
+  clipTarget.setAttribute('type', 'text');
+  clipTarget.focus();
+  clipTarget.select();
+  // Copy the input value to clipboard.
+  document.execCommand("copy");
+  // Set the input back to hidden.
+  clipTarget.setAttribute('type', 'hidden');
+  // Update the title of the page to indicate the clipboard was updated.
+  document.querySelector('head > title').innerText = "Added to clipboard";
+  // Reset the title.
+  setTimeout(()=>{document.querySelector('head > title').innerText = "Named Colors Wheel"}, 3000);
+}
+</script>
+<div id="preview-container"></div>
+<input type="hidden" id="clipboard" />
 <a id='about-link' href='#about'>❓</a>
 <div id='about'>
   <a class='close' href='#'>❌</a>
