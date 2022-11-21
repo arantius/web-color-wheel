@@ -288,17 +288,28 @@ svg.addEventListener('click', e => {
   activateColor(el);
 });
 
+// https://stackoverflow.com/a/5624139/91238
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 let previewLocked = false;
 function renderPreview(color) {
   if (!color) {
     document.getElementById('preview').innerHTML = '';
     return;
   }
+  let [r, g, b] = colors[color];
 
   document.getElementById('preview').innerHTML = `
   <h1>
     ${color}
     <span id='swatch' style='background-color: ${color};'>&nbsp;</span>
+    ${rgbToHex(r, g, b).toUpperCase()}
   </h1>
   `;
 }
