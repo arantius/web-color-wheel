@@ -10,6 +10,33 @@ body {
   display: inline-block;
   min-width: 5em;
 }
+
+#about-link {
+  margin: 1ex;
+  position: absolute;
+  right: 0;
+  text-decoration: none;
+  top: 0;
+}
+#about {
+  background: white;
+  border: 2px solid black;
+  display: none;
+  color: black;
+  left: 0;
+  margin: 0 10em;
+  position: fixed;
+  top: 10em;
+}
+#about:target {
+  display: block;
+}
+#about .close {
+  color: black;
+  float: right;
+  margin: 1ex;
+  text-decoration: none;
+}
 </style>
 </head>
 <body>
@@ -323,6 +350,13 @@ document.body.addEventListener('click', e => {
 </script>
 <h1 id="preview"></h1>
 
-<!--
-https://news.ycombinator.com/item?id=33647207
--->
+<a id='about-link' href='#about'>
+  ❔
+</a>
+<div id='about'>
+  <a class='close' href='#'>⌧</a>
+  <p>I'm far from a designer, but I make web pages.  For quite some time I've thought about the palette of "web colors".  I'd like to be able to pick from those colors, when making simple web pages.</p>
+  <p>I've thought about this "color wheel" arrangement, i.e. when using image editors.  It's a compact way to represent a whole range of colors.  I was reminded of the combination of these things by <a href="https://news.ycombinator.com/item?id=33647207">a recent Hacker News comment thread</a>.</p>
+  <p>So here it is: a color wheel, with only "web colors" on it.  Each color is placed on the wheel, then grown to a polygon with a Voronoi diagram.</p>
+  <p>Hover colors to see their name (and preview swatch and hex code).  Click one to "lock" it.</p>
+</div>
