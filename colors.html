@@ -240,7 +240,6 @@ function renderWheel() {
     // Based on https://stackoverflow.com/a/54522007/91238 .
     // I've tweaked it to spread out some of the colors (especially they greys)
     // that don't fit well into a true H/S wheel.
-    //let colorRadius = Math.pow((s+v)/2, 1.5)/1.11 * radius;
     let colorRadius = (s + v/5)*0.75 * radius;
     let colorAngle = h/360 * 2 * Math.PI;
 
