@@ -43,6 +43,7 @@ body {
 svg {
   clip-path: circle(300px at center);
 }
+polygon { stroke-width: 1px; }
 
 .swatch {
   border: 8px outset white;
@@ -60,11 +61,7 @@ svg {
     viewbox="0 0 1024 1024"
     width="600"
     xmlns="http://www.w3.org/2000/svg"
-    >
-  <style>
-  polygon { stroke-width: 1px; }
-  </style>
-</svg>
+    ></svg>
 
 <!-- https://github.com/gorhill/Javascript-Voronoi -->
 <script src="rhill-voronoi-core.min.js"></script>
@@ -230,7 +227,7 @@ const cx = radius;
 const cy = radius;
 
 const svg = document.querySelector('svg');
-const svgStyle = svg.querySelector('style').sheet;
+const styleSheet = document.styleSheets[0];
 
 // TODO: Select-able color categories, re-render wheel.
 function renderWheel() {
@@ -277,7 +274,7 @@ function renderWheel() {
 
     svg.appendChild(c);
     let rgb = `rgb(${r}, ${g}, ${b})`;
-    svgStyle.insertRule(`[data-color='${colorName}'] { fill: ${rgb}; stroke: ${rgb}; }`);
+    styleSheet.insertRule(`[data-color='${colorName}'] { fill: ${rgb}; stroke: ${rgb}; }`);
   });
 }
 renderWheel();
