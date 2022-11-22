@@ -244,8 +244,8 @@ function renderWheel() {
     let colorRadius = (s + v/5)*0.75 * radius;
     let colorAngle = h/360 * 2 * Math.PI;
 
-    let x = Math.cos(colorAngle) * colorRadius + 512;
-    let y = Math.sin(colorAngle) * colorRadius + 512;
+    let x = Math.cos(colorAngle) * colorRadius + cx;
+    let y = Math.sin(colorAngle) * colorRadius + cy;
     sites.push({x: x, y: y});
     colorsBySite[[x, y]] = name;
   });
